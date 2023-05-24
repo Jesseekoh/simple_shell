@@ -11,6 +11,7 @@
 #include <sys/stat.h>
 #include <dirent.h>
 
+extern char **environ;
 
 /**
 * struct path - structure for the path link list
