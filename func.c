@@ -6,13 +6,12 @@
 * @av: argument vector
 * Return: pointer to an array of string
 */
-char **creat_av(char *buffer)
+char **creat_av(char **av, char *buffer, ssize_t read)
 {
-	char **av;
 	int token, i;
 	char *string = NULL, *buffer_copy = NULL;
 
-	buffer_copy = malloc(sizeof(char) * (_strlen(buffer) + 1));
+	buffer_copy = malloc(sizeof(char) * (read + 1));
 	if (buffer_copy == NULL)
 		return (NULL);
 
@@ -33,7 +32,15 @@ char **creat_av(char *buffer)
 	i = 0;
 	while (string)
 	{
-		av[i] = string;
+		av[i] = malloc(sizeof(char) * (_strlen(string) + 1));
+		if (av[i] == NULL)
+		{
+			free(buffer_copy);
+			free(av);
+			return (NULL);
+		}
+
+		_strcpy(av[i], string);
 		string = strtok(NULL, " ");
 		i++;
 	}

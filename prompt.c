@@ -7,80 +7,47 @@
 */
 void prompt(char **arg, char **env)
 {
-	char **av = NULL;
+	char **av;
 	char *buffer = NULL;
-	path_t *head = NULL, *tmp;
+	size_t n = 0;
+	ssize_t read;
+	int i;
 
-	link_path(&head);
 	while (1)
 	{
-		tmp = head;
 		if (isatty(STDIN_FILENO))
 			write(1, "#cisfun$ ", 9);
 
-		buffer = get_args(arg, head);
+		/* allocate memory for the buffer */
+		read = getline(&buffer, &n, stdin);
+		if (read == -1)
+		{
+			free(buffer);
+			free_av(av);
+			exit(EXIT_SUCCESS);
+		}
+		i = 0;
+		while (buffer[i])
+		{
+			if (buffer[i] == '\n')
+				buffer[i] = 0;
 
-		av = creat_av(buffer);
+			i++;
+		}
+		av = creat_av(av, buffer, read);
 		if (av == NULL)
 		{
-			free_head(head);
 			free(buffer);
+			free_av(av);
 			exit(EXIT_FAILURE);
 		}
 
-		is_exit(av, head, buffer);
-		if (is_env(av) != 0)
-		{
-			av[0] = process_cmd(av[0], tmp);
-			check_file(av, arg, env);
-			free(av[0]);
-		}
-		free(av);
-		free(buffer);
+		run_cmd(av, arg, env);
 	}
+	free(buffer);
+	free_av(av);
 }
 
-/**
- * get_args - get argument passed to the program
- * @arg: argument passed to the progam
- * @av: argument vector
- * Return: buffer
- */
-char *get_args(char **arg, path_t *head)
-{
-	char *buffer = NULL;
-	ssize_t read;
-	size_t n = 0;
-	int i;
-
-	/* allocate memory for the buffer */
-	buffer = malloc(sizeof(char) * n);
-	if (buffer == NULL)
-	{
-		free(buffer);
-		free_head(head);
-		perror(arg[0]);
-		exit(EXIT_FAILURE);
-	}
-
-	/* get argument */
-	read = getline(&buffer, &n, stdin);
-	if (read == -1)
-	{
-		free_head(head);
-		free(buffer);
-		exit(EXIT_SUCCESS);
-	}
-	i = 0;
-	while (buffer[i])
-	{
-		if (buffer[i] == '\n')
-			buffer[i] = 0;
-
-		i++;
-	}
-	return (buffer);
-}
 /**
 * run_cmd - execute the command
 * @av: argument vector
@@ -125,26 +92,4 @@ void free_av(char **av)
 		i++;
 	}
 	free(av);
-}
-
-/**
- * check_file - check if a file is valid
- * @av: argument vector
- * @arg: command line argument
- * @env: environmental variable
- */
-int check_file(char **av, char **arg, char **env)
-{
-	struct stat st;
-
-	if (stat(av[0], &st) == 0)
-	{
-		run_cmd(av, arg, env);
-		return (0);
-	}
-	else
-	{
-		perror(arg[0]);
-		return (1);
-	}
 }

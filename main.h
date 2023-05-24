@@ -11,7 +11,6 @@
 #include <sys/stat.h>
 #include <dirent.h>
 
-extern char **environ;
 
 /**
 * struct path - structure for the path link list
@@ -24,24 +23,12 @@ extern char **environ;
 		struct path *next;
 	} path_t;
 
-/* All Functions prototype*/
-int check_file(char **av, char **arg, char **env);
-void is_exit(char **av, path_t *head, char *buffer);
-int is_env(char **av);
-void free_head(path_t *head);
-void link_path(path_t **head);
-char *process_cmd(char *pathname, path_t *tmp);
-int _strcmp(char *str1, char *str2);
-int is_path(char *string);
-char *_strcat(char *st1, char *st2);
-char *_getenv(const char *name);
-char *get_args(char **arg, path_t *head);
 void free_av(char **av);
 char *_strcpy(char *dest, char *string);
 void run_cmd(char *argv[], char **arg, char **env);
 unsigned int _strlen(char *string);
 int av_len(char *buffer);
-char **creat_av(char *buffer);
+char **creat_av(char **av, char *buffer, ssize_t read);
 void prompt(char **arg, char **env);
 
 #endif
