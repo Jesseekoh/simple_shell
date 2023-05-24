@@ -37,13 +37,11 @@ void execute(char **arg, char **argv)
  */
 int main(int argc, char *argv[])
 {
-	char *arg[] = {NULL, NULL};
-	int i;
-	char *string = NULL;
+	char *arg[] = {NULL, NULL}, *string = NULL;
 	size_t n = 0;
+	int i;
 
 	(void)argc;
-
 	while (1)
 	{
 		if (isatty(STDIN_FILENO))
@@ -57,6 +55,11 @@ int main(int argc, char *argv[])
 		}
 		if (getline(&string, &n, stdin) == -1)
 		{
+			if (feof(stdin))
+			{
+				free(string);
+				exit(EXIT_SUCCESS);
+			}
 			free(string);
 			exit(EXIT_SUCCESS);
 		}
@@ -70,10 +73,8 @@ int main(int argc, char *argv[])
 			i++;
 		}
 		arg[0] = string;
-
 		execute(arg, argv);
 		free(string);
 	}
-	free(string);
 	return (0);
 }
