@@ -8,13 +8,13 @@
 void prompt(char **arg, char **env)
 {
 	char **av;
-	char *buffer = NULL;
 	size_t n = 0;
 	ssize_t read;
-	int i;
 
 	while (1)
 	{
+		char *buffer = NULL;
+
 		if (isatty(STDIN_FILENO) == 1)
 			write(STDOUT_FILENO, "#cisfun$ ", 9);
 
@@ -23,17 +23,9 @@ void prompt(char **arg, char **env)
 		if (read == -1)
 		{
 			free(buffer);
-			free_av(av);
 			exit(EXIT_SUCCESS);
 		}
-		i = 0;
-		while (buffer[i])
-		{
-			if (buffer[i] == '\n')
-				buffer[i] = 0;
 
-			i++;
-		}
 		av = creat_av(av, buffer, read);
 		if (av == NULL)
 		{
@@ -45,6 +37,8 @@ void prompt(char **arg, char **env)
 			is_file(av, buffer, arg);
 
 		run_cmd(av, arg, env);
+		free(buffer);
+		free_av(av);
 	}
 }
 

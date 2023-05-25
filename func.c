@@ -28,7 +28,7 @@ char **creat_av(char **av, char *buffer, ssize_t read)
 		return (NULL);
 	}
 
-	string = strtok(buffer, " ");
+	string = strtok(buffer, " \n");
 	i = 0;
 	while (string)
 	{
@@ -41,7 +41,7 @@ char **creat_av(char **av, char *buffer, ssize_t read)
 		}
 
 		_strcpy(av[i], string);
-		string = strtok(NULL, " ");
+		string = strtok(NULL, " \n");
 		i++;
 	}
 	av[i] = NULL;
