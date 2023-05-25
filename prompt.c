@@ -33,13 +33,29 @@ void prompt(char **arg, char **env)
 			free_av(av);
 			exit(EXIT_FAILURE);
 		}
-		if (isatty(STDIN_FILENO) == 0)
-			is_file(av, buffer, arg);
+		if (is_space(av[0]) == 1)
+		{
+			if (isatty(STDIN_FILENO) == 0)
+				is_file(av, buffer, arg);
 
-		run_cmd(av, arg, env);
+			run_cmd(av, arg, env);
+		}
 		free(buffer);
 		free_av(av);
 	}
+}
+
+/**
+ * is_space - check if argument is space
+ * @args: argument
+ * Return: 0(success) 1(failure)
+ */
+int is_space(char *args)
+{
+	if (args == NULL)
+		return (0);
+
+	return (1);
 }
 
 /**
