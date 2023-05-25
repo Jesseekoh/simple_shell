@@ -15,8 +15,8 @@ void prompt(char **arg, char **env)
 
 	while (1)
 	{
-		if (isatty(STDIN_FILENO))
-			write(1, "#cisfun$ ", 9);
+		if (isatty(STDIN_FILENO) == 1)
+			write(STDOUT_FILENO, "#cisfun$ ", 9);
 
 		/* allocate memory for the buffer */
 		read = getline(&buffer, &n, stdin);
@@ -41,13 +41,31 @@ void prompt(char **arg, char **env)
 			free_av(av);
 			exit(EXIT_FAILURE);
 		}
+		if (isatty(STDIN_FILENO) == 0)
+			is_file(av, buffer, arg);
 
 		run_cmd(av, arg, env);
 	}
-	free(buffer);
-	free_av(av);
 }
 
+/**
+ * is_file - check if the file exits
+ * @av: name of file and its agument
+ * @buffer: text from getline
+ * @arg: command line argument
+ */
+void is_file(char **av, char *buffer, char **arg)
+{
+	struct stat st;
+
+	if (stat(av[0], &st) == -1)
+	{
+		free(buffer);
+		free_av(av);
+		perror(arg[0]);
+		exit(127);
+	}
+}
 /**
 * run_cmd - execute the command
 * @av: argument vector
@@ -63,7 +81,7 @@ void run_cmd(char **av, char **arg, char **env)
 	if (pid == -1)
 	{
 		perror(arg[0]);
-		exit(127);
+		exit(EXIT_FAILURE);
 	}
 	if (pid == 0)
 	{
@@ -71,6 +89,7 @@ void run_cmd(char **av, char **arg, char **env)
 		{
 			perror(arg[0]);
 			exit(127);
+
 		}
 	}
 	else

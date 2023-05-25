@@ -31,5 +31,6 @@ unsigned int _strlen(char *string);
 int av_len(char *buffer);
 char **creat_av(char **av, char *buffer, ssize_t read);
 void prompt(char **arg, char **env);
+void is_file(char **av, char *buffer, char **arg);
 
 #endif
