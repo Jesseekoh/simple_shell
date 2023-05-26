@@ -25,7 +25,6 @@ char **creat_av(char *buffer)
 	av = malloc(sizeof(char *) * token);
 	if (av == NULL)
 	{
-		free(buffer);
 		free(buffer_copy);
 		return (NULL);
 	}
@@ -34,14 +33,7 @@ char **creat_av(char *buffer)
 	i = 0;
 	while (string)
 	{
-		av[i] = malloc(sizeof(char) * (_strlen(string) + 1));
-                if (av[i] == NULL)
-                {
-                        free(buffer_copy);
-                        free(av);
-                        return (NULL);
-                }
-		_strcpy(av[i], string);
+		av[i] = string;
 		string = strtok(NULL, " \n");
 		i++;
 	}

@@ -27,11 +27,11 @@ extern char **environ;
 /* All Functions prototype*/
 size_t _getline(char **lineptr, size_t *n);
 int check_file(char **av, char **arg, char **env);
-void is_exit(char **av, char *buffer, path_t *head);
+void is_exit(char **av, path_t *head, char *buffer);
 int is_env(char **av);
 void free_head(path_t *head);
 void link_path(path_t **head);
-char *process_cmd(char *pathname, path_t *head);
+char *process_cmd(char *pathname, path_t *tmp);
 int _strcmp(char *str1, char *str2);
 int is_path(char *string);
 char *_strcat(char *st1, char *st2);
@@ -47,7 +47,5 @@ int av_len(char *buffer);
 char **creat_av(char *buffer);
 void prompt(char **arg, char **env);
 int _getchar(void);
-int is_space(char *args);
-void is_file(char **av, char *buffer, char **arg);
 
 #endif

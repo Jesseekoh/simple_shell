@@ -8,48 +8,42 @@
 void prompt(char **arg, char **env)
 {
 	char **av = NULL;
-	char *buffer = NULL, *tmp;
-	path_t *head = NULL;
+	char *buffer = NULL;
+	path_t *head = NULL, *tmp;
 
 	link_path(&head);
 	while (1)
 	{
+		tmp = head;
 		if (isatty(STDIN_FILENO))
-			write(STDOUT_FILENO, "#cisfun$ ", 9);
+			write(1, "#cisfun$ ", 9);
 
 		buffer = get_args(arg, head);
 
 		av = creat_av(buffer);
 		if (av == NULL)
 		{
-			free_av(av);
+			free_head(head);
 			free(buffer);
 			exit(EXIT_FAILURE);
 		}
 
-		if (is_space(av[0]) == 1)
+		is_exit(av, head, buffer);
+		if (is_env(av) != 0)
 		{
-			is_exit(av, buffer, head);
-			if (is_env(av) != 0)
-			{
-				tmp = av[0];
-				av[0] = process_cmd(av[0], head);
-				if (isatty(STDIN_FILENO) == 0)
-					is_file(av, buffer, arg);
-
-				if (check_file(av, arg, env) == 0)
-					free(tmp);
-			}
+			av[0] = process_cmd(av[0], tmp);
+			if (check_file(av, arg, env) == 0)
+				free(av[0]);
 		}
-	free_av(av);
-	free(buffer);
+		free(av);
+		free(buffer);
 	}
 }
 
 /**
  * get_args - get argument passed to the program
  * @arg: argument passed to the progam
- * @head: first node for the path link list
+ * @av: argument vector
  * Return: buffer
  */
 char *get_args(char **arg, path_t *head)
@@ -68,13 +62,14 @@ char *get_args(char **arg, path_t *head)
 	}
 
 	/* get argument */
-	read = getline(&buffer, &n, stdin);
+	read = _getline(&buffer, &n);
 	if (read == -1)
 	{
 		free_head(head);
 		free(buffer);
 		exit(EXIT_SUCCESS);
 	}
+
 	return (buffer);
 }
 /**
@@ -91,7 +86,6 @@ void run_cmd(char **av, char **arg, char **env)
 	pid = fork();
 	if (pid == -1)
 	{
-		free_av(av);
 		perror(arg[0]);
 		exit(EXIT_FAILURE);
 	}
@@ -128,8 +122,7 @@ void free_av(char **av)
  * check_file - check if a file is valid
  * @av: argument vector
  * @arg: command line argument
- * @env: environmental variablei
- * Return: 0(success) 1(error)
+ * @env: environmental variable
  */
 int check_file(char **av, char **arg, char **env)
 {
