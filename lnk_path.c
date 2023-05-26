@@ -2,6 +2,7 @@
 
 /**
  * link_path - creat a link of all directories in the path variable
+ * @head: head
  * Return: the head else NULL
  */
 void link_path(path_t **head)
@@ -14,6 +15,7 @@ void link_path(path_t **head)
 	while (path)
 	{
 		path_t *new_node = malloc(sizeof(path_t));
+
 		if (new_node == NULL)
 			exit(EXIT_FAILURE);
 
@@ -31,9 +33,7 @@ void link_path(path_t **head)
 				tmp = tmp->next;
 
 			tmp->next = new_node;
-
 		}
 		path = strtok(NULL, ":");
 	}
-	return;
 }
