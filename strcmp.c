@@ -1,5 +1,11 @@
 #include "main.h"
 
+/**
+ * _strcmp - compares two strings
+ * @str1: first string
+ * @str2: second string
+ * Return: if same, 0 else 1
+ */
 int _strcmp(char *str1, char *str2)
 {
 	int i = 0;
@@ -10,10 +16,15 @@ int _strcmp(char *str1, char *str2)
 
 		if ((str1[i] == '\0') && (str2[i] == '\0'))
 			return (0);
-
 	}
 	return (1);
 }
+
+/**
+ * is_path - checks if a string is a path
+ * @string: string to check
+ * Return: O if true and 1 if false
+ */
 
 int is_path(char *string)
 {
@@ -35,7 +46,7 @@ int is_path(char *string)
 char *_strcat(char *st1, char *st2)
 {
 	char *result;
-	int len, i , j;
+	int len, i, j;
 
 	len = _strlen(st1) + _strlen(st2);
 
@@ -55,5 +66,5 @@ char *_strcat(char *st1, char *st2)
 		result[i] = st2[j];
 
 	result[i] = '\0';
-	return (result);	
+	return (result);
 }
