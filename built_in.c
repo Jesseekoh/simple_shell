@@ -14,9 +14,13 @@ void is_exit(char **av, char *buffer, path_t *head)
 		free(buffer);
 		exit(EXIT_SUCCESS);
 	}
-
 }
 
+/**
+ * is_env - checks env
+ * @av: argument vector
+ * Return: 0 if true and 1 if false
+ */
 int is_env(char **av)
 {
 	char **env_c;
