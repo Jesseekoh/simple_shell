@@ -50,8 +50,11 @@ size_t _getline(char **lineptr, size_t *n)
 int _getchar(void)
 {
 	char buffer[BUF_SIZE];
-	static ssize_t rd = 0;
-	static int bu_p = 0;
+	static ssize_t rd;
+	static int bu_p;
+
+	rd = 0;
+	bu_p = 0;
 
 	if (bu_p >= rd)
 	{
