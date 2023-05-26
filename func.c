@@ -1,11 +1,9 @@
 #include "main.h"
 /**
-* creat_av - creat argument vector
-* @read: element read from stdin
-* @buffer: string read from stdout
-* @av: argument vector
-* Return: pointer to an array of string
-*/
+ * creat_av - creat argument vector
+ * @buffer: string read from stdout
+ * Return: pointer to an array of string
+ */
 char **creat_av(char *buffer)
 {
 	char **av;
@@ -35,12 +33,12 @@ char **creat_av(char *buffer)
 	while (string)
 	{
 		av[i] = malloc(sizeof(char) * (_strlen(string) + 1));
-                if (av[i] == NULL)
-                {
-                        free(buffer_copy);
-                        free(av);
-                        return (NULL);
-                }
+		if (av[i] == NULL)
+		{
+			free(buffer_copy);
+			free(av);
+			return (NULL);
+		}
 		_strcpy(av[i], string);
 		string = strtok(NULL, " \n");
 		i++;
