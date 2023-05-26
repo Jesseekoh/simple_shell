@@ -1,5 +1,12 @@
 #include "main.h"
 
+/**
+ * process_cmd - processes command and returns the path of
+ * the command
+ * @pathname: pathname
+ * @head: head
+ * Return: string
+ */
 char *process_cmd(char *pathname, path_t *head)
 {
 	DIR *dir;
@@ -24,12 +31,12 @@ char *process_cmd(char *pathname, path_t *head)
 			{
 				if (_strcmp(entity->d_name, path) == 0)
 				{
-				
+
 					result = _strcat(dir_path, path);
 					closedir(dir);
 					return (result);
 				}
-				
+
 				entity = readdir(dir);
 			}
 			closedir(dir);
