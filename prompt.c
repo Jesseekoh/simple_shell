@@ -15,12 +15,10 @@ void prompt(char **arg, char **env)
 	{
 		if (isatty(STDIN_FILENO))
 			write(STDOUT_FILENO, "#cisfun$ ", 9);
-
 		buffer = get_args(arg, head);
 		av = creat_av(buffer);
 		if (av == NULL)
 		{
-			free_av(av);
 			free(buffer);
 			exit(EXIT_FAILURE);
 		}
@@ -40,6 +38,8 @@ void prompt(char **arg, char **env)
 				}
 				else
 				{
+					if (isatty(STDIN_FILENO) == 0)
+						is_file(av, buffer, arg);
 					run_cmd(av, arg, env);
 				}
 			}
