@@ -7,8 +7,7 @@
 */
 void prompt(char **arg, char **env)
 {
-	char **av = NULL;
-	char *buffer = NULL, *tmp;
+	char **av = NULL, *buffer = NULL, *tmp;
 	path_t *head = NULL;
 
 	link_path(&head);
@@ -18,7 +17,6 @@ void prompt(char **arg, char **env)
 			write(STDOUT_FILENO, "#cisfun$ ", 9);
 
 		buffer = get_args(arg, head);
-
 		av = creat_av(buffer);
 		if (av == NULL)
 		{
@@ -26,7 +24,6 @@ void prompt(char **arg, char **env)
 			free(buffer);
 			exit(EXIT_FAILURE);
 		}
-
 		if (is_space(av[0]) == 1)
 		{
 			is_exit(av, buffer, head);
@@ -38,7 +35,6 @@ void prompt(char **arg, char **env)
 					av[0] = process_cmd(av[0], head);
 					if (isatty(STDIN_FILENO) == 0)
 						is_file(av, buffer, arg);
-
 					if (check_file(av, arg, env) == 0)
 						free(tmp);
 				}
