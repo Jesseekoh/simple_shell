@@ -7,78 +7,74 @@
 */
 void prompt(char **arg, char **env)
 {
-	char **av = NULL, *buffer = NULL, *tmp;
-	path_t *head = NULL;
+	char **av;
+	size_t n = 0;
+	ssize_t read;
 
-	link_path(&head);
 	while (1)
 	{
-		if (isatty(STDIN_FILENO))
+		char *buffer = NULL;
+
+		if (isatty(STDIN_FILENO) == 1)
 			write(STDOUT_FILENO, "#cisfun$ ", 9);
-		buffer = get_args(arg, head);
-		av = creat_av(buffer);
+
+		/* allocate memory for the buffer */
+		read = getline(&buffer, &n, stdin);
+		if (read == -1)
+		{
+			free(buffer);
+			exit(EXIT_SUCCESS);
+		}
+
+		av = creat_av(av, buffer, read);
 		if (av == NULL)
 		{
 			free(buffer);
+			free_av(av);
 			exit(EXIT_FAILURE);
 		}
 		if (is_space(av[0]) == 1)
 		{
-			is_exit(av, buffer, head);
-			if (is_env(av) != 0)
-			{
-				if (is_path(av[0]) == 1)
-				{
-					tmp = av[0];
-					av[0] = process_cmd(av[0], head);
-					if (isatty(STDIN_FILENO) == 0)
-						is_file(av, buffer, arg);
-					if (check_file(av, arg, env) == 0)
-						free(tmp);
-				}
-				else
-				{
-					if (isatty(STDIN_FILENO) == 0)
-						is_file(av, buffer, arg);
-					run_cmd(av, arg, env);
-				}
-			}
+			if (isatty(STDIN_FILENO) == 0)
+				is_file(av, buffer, arg);
+
+			run_cmd(av, arg, env);
 		}
-	free_av(av);
-	free(buffer);
+		free(buffer);
+		free_av(av);
 	}
 }
 
 /**
- * get_args - get argument passed to the program
- * @arg: argument passed to the progam
- * @head: first node for the path link list
- * Return: buffer
+ * is_space - check if argument is space
+ * @args: argument
+ * Return: 0(success) 1(failure)
  */
-char *get_args(char **arg, path_t *head)
+int is_space(char *args)
 {
-	char *buffer = NULL;
-	ssize_t read;
-	size_t n = 0;
+	if (args == NULL)
+		return (0);
 
-	/* allocate memory for the buffer */
-	buffer = malloc(sizeof(char) * n);
-	if (buffer == NULL)
-	{
-		free_head(head);
-		perror(arg[0]);
-		exit(EXIT_FAILURE);
-	}
+	return (1);
+}
 
-	/* get argument */
-	read = getline(&buffer, &n, stdin);
-	if (read == -1)
+/**
+ * is_file - check if the file exits
+ * @av: name of file and its agument
+ * @buffer: text from getline
+ * @arg: command line argument
+ */
+void is_file(char **av, char *buffer, char **arg)
+{
+	struct stat st;
+
+	if (stat(av[0], &st) == -1)
 	{
-		free_head(head);
 		free(buffer);
-		exit(EXIT_SUCCESS);
+		free_av(av);
+		perror(arg[0]);
+		exit(127);
 	}
-	return (buffer);
 }
 /**
 * run_cmd - execute the command
@@ -94,7 +90,6 @@ void run_cmd(char **av, char **arg, char **env)
 	pid = fork();
 	if (pid == -1)
 	{
-		free_av(av);
 		perror(arg[0]);
 		exit(EXIT_FAILURE);
 	}
@@ -104,6 +99,7 @@ void run_cmd(char **av, char **arg, char **env)
 		{
 			perror(arg[0]);
 			exit(127);
+
 		}
 	}
 	else
@@ -125,27 +121,4 @@ void free_av(char **av)
 		i++;
 	}
 	free(av);
-}
-
-/**
- * check_file - check if a file is valid
- * @av: argument vector
- * @arg: command line argument
- * @env: environmental variablei
- * Return: 0(success) 1(error)
- */
-int check_file(char **av, char **arg, char **env)
-{
-	struct stat st;
-
-	if (stat(av[0], &st) == 0)
-	{
-		run_cmd(av, arg, env);
-		return (0);
-	}
-	else
-	{
-		perror(arg[0]);
-		return (1);
-	}
 }
