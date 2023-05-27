@@ -32,13 +32,20 @@ void prompt(char **arg, char **env)
 			is_exit(av, buffer, head);
 			if (is_env(av) != 0)
 			{
-				tmp = av[0];
-				av[0] = process_cmd(av[0], head);
-				if (isatty(STDIN_FILENO) == 0)
-					is_file(av, buffer, arg);
+				if (is_path(av[0]) == 1)
+				{
+					tmp = av[0];
+					av[0] = process_cmd(av[0], head);
+					if (isatty(STDIN_FILENO) == 0)
+						is_file(av, buffer, arg);
 
-				if (check_file(av, arg, env) == 0)
-					free(tmp);
+					if (check_file(av, arg, env) == 0)
+						free(tmp);
+				}
+				else
+				{
+					run_cmd(av, arg, env);
+				}
 			}
 		}
 	free_av(av);
