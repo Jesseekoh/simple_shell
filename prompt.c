@@ -20,6 +20,7 @@ void prompt(char **arg, char **env)
 		if (isatty(STDIN_FILENO) == 1)
 			write(STDOUT_FILENO, "#cisfun$ ", 9);
 
+		fflush(stdin);
 		/* allocate memory for the buffer */
 		read = getline(&buffer, &n, stdin);
 		if (read == -1)
@@ -122,7 +123,10 @@ void run_cmd(char **av, char **arg, char **env)
 	}
 	else
 	{
+
 		wait(&status);
+		if (isatty(STDIN_FILENO) == 0)
+			exit(2);
 	}
 }
 /**
