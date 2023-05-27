@@ -103,7 +103,7 @@ void run_cmd(char **av, char **arg, char **env)
 		if (execve(av[0], av, env) == -1)
 		{
 			perror(arg[0]);
-			exit(EXIT_FAILURE);
+			exit(127);
 		}
 	}
 	else
