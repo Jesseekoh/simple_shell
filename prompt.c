@@ -7,10 +7,12 @@
 */
 void prompt(char **arg, char **env)
 {
-	char **av;
+	char **av, *tmp;
 	size_t n = 0;
 	ssize_t read;
+	path_t *head = NULL;
 
+	link_path(&head);
 	while (1)
 	{
 		char *buffer = NULL;
@@ -33,12 +35,28 @@ void prompt(char **arg, char **env)
 			free_av(av);
 			exit(EXIT_FAILURE);
 		}
+		
 		if (is_space(av[0]) == 1)
 		{
-			if (isatty(STDIN_FILENO) == 0)
-				is_file(av, buffer, arg);
-
-			run_cmd(av, arg, env);
+			is_exit(av, buffer, head);
+			if (is_env(av) != 0)
+			{
+				if (is_path(av[0]) == 1)
+				{
+					tmp = av[0];
+					av[0] = process_cmd(av[0], head);
+					if (isatty(STDIN_FILENO) == 0)
+						is_file(av, buffer, arg);
+					if (check_file(av, arg, env) == 0)
+						free(tmp);
+				}
+				else
+				{
+					if (isatty(STDIN_FILENO) == 0)
+						is_file(av, buffer, arg);
+					run_cmd(av, arg, env);
+				}
+			}
 		}
 		free(buffer);
 		free_av(av);
